@@ -1,0 +1,119 @@
+﻿@model ApplicationUser
+
+<div class="p-3 border mx-auto" style="width:400px">
+    <h3 class="col text-center">User Details</h3>
+    <hr />
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-3">
+        <div class="col-sm-4"><strong>First Name</strong></div>
+        <div class="col-sm-8">@Model.FirstName</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-4"><strong>Last Name</strong></div>
+        <div class="col-sm-8">@Model.LastName</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-4"><strong>Address</strong></div>
+        <div class="col-sm-8">@Model.Address</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-4"><strong>Create At</strong></div>
+        <div class="col-sm-8">@Model.CreateAt</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-4"><strong>Email</strong></div>
+        <div class="col-sm-8">@Model.Email</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-4"><strong>Phone</strong></div>
+        <div class="col-sm-8">@Model.PhoneNumber</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-4"><strong>Role</strong></div>
+        <div class="col-sm-8">
+            @{
+                var roles = ViewBag.Roles as IList<string>;
+                var roleStr = string.Join(",", roles ?? new List<string>());
+                var color = "";
+
+                if (roleStr.Contains("admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    color = "bg-danger";
+                }
+                else if (roleStr.Contains("client", StringComparison.OrdinalIgnoreCase))
+                {
+                    color = "bg-info text-dark";
+                }
+                else if (roleStr.Contains("seller", StringComparison.OrdinalIgnoreCase))
+                {
+                    color = "bg-warning text-dark";
+                }
+            }
+            <span class="badge rounded-pill @color">@roleStr</span>
+            <a asp-action="EditRole"  data-bs-toggle="modal" data-bs-target="#Edit">Edit</a>
+        </div>
+    </div>
+            <hr />
+    <div>
+            <button asp-action="Delete" asp-controller="user" class="btn btn-danger"
+             data-bs-toggle="modal" data-bs-target="#delete">Delete</button>
+    <a asp-action="index" class="btn btn-outline-primary">Back</a>
+    </div>
+</div>
+
+
+<div class="modal fade" id="Edit" tabindex="-1"  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Edit Role</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <form method="post" asp-controller="user" asp-action="EditRole">
+              <input type="hidden" name="id" value="@Model.Id"/>
+              <label> Select User Role</label>
+<select class="form-select mb-2" name="newRole" asp-items="@ViewBag.SelectItems"></select>
+              <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="delete" tabindex="-1"  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Delete User</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          Do You Sure To Delete This User
+      </div>
+      <div class="modal-footer">
+         <a asp-action="DeleteUser" asp-route-id=@Model.Id class="btn btn-primary">Delete</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

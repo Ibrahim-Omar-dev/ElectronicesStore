@@ -1,0 +1,47 @@
+﻿@model Product
+
+<div class="container p-3">
+    <div class="row g-3">
+        <!-- Product Image -->
+        <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <img src="/products/@Model.ImageFile" 
+                 alt="@Model.Name" 
+                 width="330" height="330" 
+                 class="img-fluid" />
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-8">
+            <h2 class="display-1">@Model.Name</h2>
+            <p class="display-4 fw-bold">@Model.Price$</p>
+
+            <button type="button" class="btn btn-warning btn-sm">
+                Add To Cart 
+                <i class="bi bi-cart4 text-white"></i>
+            </button>
+
+            <hr />
+
+            <!-- Brand -->
+            <div class="row mb-2">
+                <strong class="col-md-3">Brand</strong>
+                <div class="col-md-9">@Model.Brand</div>
+            </div>
+
+            <!-- Category -->
+            <div class="row mb-2">
+                <strong class="col-md-3">Category</strong>
+                <div class="col-md-9">@Model.Category</div>
+            </div>
+
+            <!-- Description -->
+            <div class="row">
+                <div class="col">
+                    <strong>Description</strong>
+                    <br />
+                    @Model.Description
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

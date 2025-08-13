@@ -1,0 +1,21 @@
+# Build outputs - Never commit these!
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.user
+
+appsettings.json
+
+# Configuration files with secrets
+appsettings.Development.json
+appsettings.Production.json
+**/bin/Debug/
+**/bin/Release/
+
+# Environment files
+.env
+
+# Temporary files
+*.tmp

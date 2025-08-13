@@ -1,0 +1,47 @@
+﻿@using ElectronicsStore.Models.DTO
+@model LoginDto
+
+<div class="row rounded shadow border p-4 col-md-4 mx-auto">
+    <h3 class="display-3 text-center">Please Login</h3>
+    <hr />
+    @if (ViewBag.ErrorMessage != null)
+    {
+            <div class="alert alert-danger text-center">
+            @ViewBag.ErrorMessage
+            </div>
+    }
+
+
+    <form asp-controller="Account" asp-action="Login" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label class="form-label" asp-for="Email"></label>
+            <input type="email" class="form-control" asp-for="Email" placeholder="Email" />
+            <span class="text-danger" asp-validation-for="Email"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" asp-for="Password"></label>
+            <input type="password" class="form-control" asp-for="Password" placeholder="Password" />
+            <span class="text-danger" asp-validation-for="Password"></span>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" asp-for="Remberme" />
+            <label class="form-check-label" asp-for="Remberme"></label>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </div>
+            <div class="col-sm-6">
+                <a asp-action="index" asp-controller="Home"  class="w-100 btn btn-outline-primary">Cancel</a>
+            </div>
+        </div>
+        <div >
+            <a class="btn btn-link" asp-action="ForgetPassword" asp-controller="Account">Forget Password</a>
+        </div>
+    </form>
+</div>

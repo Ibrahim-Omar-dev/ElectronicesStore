@@ -1,0 +1,359 @@
+﻿
+@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Product List";
+    int TotalPages = ViewBag.TotalPages;
+    int CurrentPage = ViewBag.CurrentPage;
+}
+
+<style>
+    .product-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 2rem 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .product-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    }
+
+    .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 3px solid #f8f9fa;
+    }
+
+    .product-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    }
+
+    .product-brand {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+    }
+
+    .product-category {
+    background: linear-gradient(45deg, #4834d4, #686de0);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+    }
+
+    .product-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #27ae60;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .btn-edit {
+    background: linear-gradient(45deg, #3742fa, #2f3542);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    margin-right: 0.5rem;
+    }
+
+    .btn-edit:hover {
+    background: linear-gradient(45deg, #2f3542, #3742fa);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(55, 66, 250, 0.4);
+    color: white;
+    }
+
+    .btn-delete {
+    background: linear-gradient(45deg, #ff3838, #ff4757);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    }
+
+    .btn-delete:hover {
+    background: linear-gradient(45deg, #ff4757, #ff3838);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 56, 56, 0.4);
+    color: white;
+    }
+
+    .btn-add {
+    background: linear-gradient(45deg, #00d2d3, #54a0ff);
+    border: none;
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 210, 211, 0.3);
+    }
+
+    .btn-add:hover {
+    background: linear-gradient(45deg, #54a0ff, #00d2d3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 210, 211, 0.4);
+    color: white;
+    }
+
+    .stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    }
+
+    .stats-number {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    }
+
+    .search-box {
+    background: white;
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    }
+
+    .table-modern {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .table-modern thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    }
+
+    .table-modern th {
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    }
+
+    .table-modern td {
+    border: none;
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+    }
+
+    .table-modern tbody tr:hover {
+    background: linear-gradient(90deg, #f8f9ff 0%, #ffffff 100%);
+    }
+</style>
+
+<div class="product-header">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-shopping-bag me-3"></i>Product Catalog
+        </h1>
+        <p class="lead mb-0">Manage your product inventory with style</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <div class="stats-number">@Model.Count()</div>
+                <div class="stats-label">Total Products</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                <div class="stats-number">@Model.GroupBy(p => p.Category).Count()</div>
+                <div class="stats-label">Categories</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                <div class="stats-number">@Model.GroupBy(p => p.Brand).Count()</div>
+                <div class="stats-label">Brands</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Add Button -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="search-box">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-0" placeholder="Search products..." id="searchInput">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-action="Create" asp-controller="Product" class="btn btn-add">
+                <i class="fas fa-plus me-2"></i>Add New Product
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function sortTable(column)
+        {
+        window.location.href=
+        }
+    </script>
+    <!-- Products Table -->
+    <div class="table-responsive">
+        <table class="table table-modern mb-5">
+            <thead>
+                <tr>
+                    <th style="cursor:pointer;" onclick="sortTable('Brand)"><i class="fas fa-hashtag me-2"></i>ID</th>
+                    <th ><i class="fas fa-image me-2"></i>Image</th>
+                    <th><i class="fas fa-box me-2"></i>Product</th>
+                    <th style="cursor:pointer;" onclick="sortTable('Brand)"><i class="fas fa-tags me-2"></i>Brand</th>
+                    <th style="cursor:pointer;" onclick="sortTable('Category')"><i class="fas fa-folder me-2"></i>Category</th>
+                    <th style="cursor:pointer;" onclick="sortTable('Price')"><i class="fas fa-dollar-sign me-2"></i>Price</th>
+                    <th style="cursor:pointer;" onclick="sortTable('CreatedAt')"><i class="fas fa-calendar me-2"></i>Created</th>
+                    <th ><i class="fas fa-cogs me-2"></i>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>
+                            <span class="badge bg-light text-dark fs-6">#@product.Id</span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(product.ImageFile))
+                            {
+                                <img src="~/products/@product.ImageFile" alt="@product.Name" class="product-image" 
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                @*   <div class="product-image bg-light d-flex align-items-center justify-content-center" style="display:none;">
+                                            <i class="fas fa-image text-muted"></i>
+                                        </div> *@
+                            }
+                            else
+                            {
+                                <div class="product-image bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-image text-muted"></i>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <div class="product-name">@product.Name</div>
+                            @if (!string.IsNullOrEmpty(product.Description))
+                            {
+                                <small class="text-muted">@(product.Description.Length > 50 ? product.Description.Substring(0, 50) + "..." : product.Description)</small>
+                            }
+                        </td>
+                        <td>
+                            <span class="product-brand">@product.Brand</span>
+                        </td>
+                        <td>
+                            <span class="product-category">@product.Category</span>
+                        </td>
+                        <td>
+                            <span class="product-price">@product.Price.ToString("C")</span>
+                        </td>
+                        <td>
+                            <div class="fw-bold">@product.CreatedAt.ToString("MMM dd")</div>
+                            <small class="text-muted">@product.CreatedAt.ToString("yyyy")</small>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@product.Id" asp-controller="Product" class="btn btn-edit btn-sm">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@product.Id" asp-controller="Product" class="btn btn-delete btn-sm" 
+                            onclick="return confirm('Are you sure you want to delete this product?')">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-box-open display-1 text-muted"></i>
+            </div>
+            <h3 class="text-muted mb-3">No Products Found</h3>
+            <p class="text-muted mb-4">Start building your catalog by adding your first product.</p>
+            <a asp-action="Create" asp-controller="Product" class="btn btn-add">
+                <i class="fas fa-plus me-2"></i>Add Your First Product
+            </a>
+        </div>
+    }
+</div>
+
+<nav >
+    <ul class="pagination">
+        @for (int i = 1; i <= TotalPages; i++)
+        {
+                <li class="page-item @(CurrentPage == i ? "active disabled" : "")">
+        <a class="page-link" 
+           asp-action="Index" 
+           asp-route-pageIndex="@i" 
+           tabindex="@(CurrentPage == i ? "-1" : null)">
+                    @i
+        </a>
+    </li>
+		}
+  </ul>
+</nav>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    // Simple search functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const tableRows = document.querySelectorAll('tbody tr');
+
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+</script>

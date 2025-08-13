@@ -1,0 +1,98 @@
+﻿@model FilterVM
+@{
+    int totalPage = ViewBag.totalPage;
+    int pageIndex = ViewBag.pageIndex;
+    ViewData["Store"] = true;
+}
+<div class="container">
+    <h2 class="text-center mt-5 mb-5 text-primary display-1">Product</h2>
+    <form method="get">
+        <div class="row mb-5">
+            <div class="col-lg-2 col-md-4">
+                <select class="form-select" name="Brand" onchange="this.form.submit()">
+                    <option value="">All Brand</option>
+                    <option value="Samsung" selected="@(Model.Brand == "Samsung")">Samsung</option>
+                    <option value="Nokia" selected="@(Model.Brand == "Nokia")">Nokia</option>
+                    <option value="iphone" selected="@(Model.Brand == "iphone")">iphone</option>
+                    <option value="HP" selected="@(Model.Brand == "HP")">HP</option>
+                    <option value="Dell" selected="@(Model.Brand == "Dell")">Dell</option>
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <select class="form-select" name="Category" onchange="this.form.submit()">
+                    <option value="">All Category</option>
+                    <option value="Computers" selected="@(Model.Category == "Computers")">Computers</option>
+                    <option value="lab" selected="@(Model.Category == "lab")">Lab</option>
+                    <option value="Printers" selected="@(Model.Category == "Printers")">Printers</option>
+                    <option value="Accessories" selected="@(Model.Category == "Accessories")">Accessories</option>
+                    <option value="Phones" selected="@(Model.Category == "Phones")">Phones</option>
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <select class="form-select" name="sort" onchange="this.form.submit()">
+                    <option value="newest" selected="@(Model.Sort == "newest")">Order By Newest</option>
+                    <option value="price_asc" selected="@(Model.Sort == "price_asc")">Price: low to high</option>
+                    <option value="price_desc" selected="@(Model.Sort == "price_desc")">Price: high to low</option>
+                </select>
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <div class="input-group mb-3">
+                    <input type="search" name="search" class="form-control" placeholder="Search By Name" value="@Model.Search">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </div>
+        <!-- Hidden field to preserve pageIndex when not explicitly set -->
+        <input type="hidden" name="pageIndex" value="@pageIndex" />
+    </form>
+
+    <div class="row g-3">
+        @foreach (var product in Model.Products)
+        {
+                <div class="col-lg-3 col-md-6">
+                    <div class="p-5 shadow rounded border text-center h-100">
+                        <img src="/products/@product.ImageFile" 
+                             class="img-fluid" 
+                             style="object-fit:contain;height:180px" />
+                        <hr />
+                        <h5 class="py-3">@product.Name</h5>
+                        <p><strong>Brand:</strong> @product.Brand</p>
+                        <p><strong>Category:</strong> @product.Category</p>
+                        <h3>@product.Price$</h3>
+                        <a class="btn btn-primary btn-sm" 
+                           asp-action="details" 
+                           asp-route-id="@product.Id">
+                           Details
+                        </a>
+                        <button type="button" class="btn btn-warning btn-sm">
+                            Add To Cart <i class="bi bi-cart4"></i>
+                        </button>
+                    </div>
+                </div>
+        }
+    </div>
+</div>
+
+@if (totalPage > 1)
+{
+        <nav class="mt-5 d-flex align-items-center justify-content-center">
+            <ul class="pagination pagination-lg">
+            @for (int i = 1; i <= totalPage; i++)
+            {
+                string active = "";
+                if (i == pageIndex)
+                {
+                    active = "active";
+                }
+                        <li class="page-item @active">
+                            <a class="page-link" 
+                               asp-route-pageIndex="@i"
+                               asp-route-search="@Model.Search"
+                               asp-route-sort="@Model.Sort"
+                               asp-route-brand="@Model.Brand"
+                               asp-route-category="@Model.Category">@i</a>
+                        </li>
+            }
+            </ul>
+        </nav>
+}

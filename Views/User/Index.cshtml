@@ -1,0 +1,56 @@
+﻿@model List<ApplicationUser>
+@inject UserManager<ApplicationUser> UserManager
+@{
+}
+
+<div class="container">
+	<h2 class="text-center text-primary mb-5">User List</h2>
+	<table class="table table-responsive table-bordered table-hover">
+		<thead>
+			<tr>
+				<th>FirstName</th>
+				<th>LastName</th>
+				<th>Address</th>
+				<th>CreateAt</th>
+				<th>PhoneNumber</th>
+				<th>Email</th>
+				<th>Role</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var user in Model)
+			{
+				<tr>
+					<td>@user.FirstName</td>
+					<td>@user.LastName</td>
+					<td>@user.Address</td>
+					<td>@user.CreateAt.ToString("MM/dd/yyyy")</td>
+					<td>@user.PhoneNumber</td>
+					<td>@user.Email</td>
+					<td>
+						@{
+							var role = await userManager.GetRolesAsync(user);
+							var roleStr = String.Join(", ", role);
+							string color = "bg-secondary";
+							if (role.Contains("admin"))
+							{
+								color = "bg-danger";
+							}
+							else if (role.Contains("client"))
+							{
+								color = "bg-info text-dark";
+							}
+							else if (role.Contains("seller"))
+							{
+								color = "bg-warning text-dark";
+							}
+							<span class="badge rounded-pill @color">@roleStr</span>
+						}
+						</td>
+						<td><a asp-action="Details" class="btn btn-primary" asp-route-id="@user.Id">Details</a></td>
+					</tr>
+			}
+		</tbody>
+	</table>
+</div>

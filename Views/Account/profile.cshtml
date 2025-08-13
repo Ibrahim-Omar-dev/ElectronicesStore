@@ -1,0 +1,124 @@
+﻿@using ElectronicsStore.Models.DTO
+@model EditProfile
+@inject UserManager<ApplicationUser> userManager;
+@{
+	var appUser = await userManager.GetUserAsync(User);
+	string role = "";
+	if (User.IsInRole("admin")) role = "admin";
+	if (User.IsInRole("seller")) role = "seller";
+	if (User.IsInRole("client")) role = "client";
+}
+<div class="row">
+	<div class=" p-4 col-md-8 rounded border mx-auto">
+		<h3 class=" display-3">Profile</h3>
+		<hr />
+		@if (ViewBag.secuessMessage != null)
+		{
+		<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+				@ViewBag.secuessMessage
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+		}
+
+		@if (ViewBag.ErrorMessage != null)
+		{
+		<div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+				@ViewBag.ErrorMessage
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+		}
+		<div class="mb-3 row">
+		   <div class="col-md-4">First Name</div>
+		   <div class="col-md-8">@appUser.FirstName</div>
+		</div>
+		<div class="mb-3 row">
+		   <div class="col-md-4">Last Name</div>
+		   <div class="col-md-8">@appUser.LastName</div>
+		</div>
+		<div class="mb-3 row">
+		   <div class="col-md-4">Email</div>
+		   <div class="col-md-8">@appUser.Email</div>
+		</div>
+		<div class="mb-3 row">
+		   <div class="col-md-4">Phone Number</div>
+		   <div class="col-md-8">@appUser?.PhoneNumber</div>
+		</div>
+		<div class="mb-3 row">
+		   <div class="col-md-4">Address</div>
+		   <div class="col-md-8">@appUser.Address</div>
+		</div>
+		<div class="mb-3 row">
+		   <div class="col-md-4">Role</div>
+		   <div class="col-md-8">@role</div>
+		</div>
+		<div class="mb-3 row">
+		   <div class="col-md-4">Create At</div>
+		   <div class="col-md-8">@appUser.CreateAt</div>
+		</div>
+		<hr/>
+		<div>
+		  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editProfile">
+		  Edit Profile
+		  </button>
+		  <a asp-action="ChangePassword" class="btn btn-warning btn-sm">Change Password</a>
+		</div>
+	</div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="editProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<h1 class="modal-title fs-5" id="exampleModalLabel">Edit Profile</h1>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	  </div>
+	  <div class="modal-body">
+	 <form method="post">
+     	<div class="mb-3 row">
+     		<label class="col-form-label col-sm-4" asp-for="FirstName"></label>
+     		<div class="col-sm-8">
+     			<input class="form-control" asp-for="FirstName" />
+     			<span asp-validation-for="FirstName" class="text-danger"></span>
+     		</div>
+     	</div>
+		 <div class="mb-3 row">
+			 <label class="col-form-label col-sm-4" asp-for="LastName"></label>
+			 <div class="col-sm-8">
+				 <input class="form-control" asp-for="LastName" />
+				 <span asp-validation-for="LastName" class="text-danger"></span>
+			 </div>
+		 </div>
+		 <div class="mb-3 row">
+			 <label class="col-form-label col-sm-4" asp-for="PhoneNumber"></label>
+			 <div class="col-sm-8">
+				 <input class="form-control" asp-for="PhoneNumber" />
+				 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+			 </div>
+		 </div>
+		 <div class="mb-3 row">
+			 <label class="col-form-label col-sm-4" asp-for="Email"></label>
+			 <div class="col-sm-8">
+				 <input class="form-control" asp-for="Email" />
+				 <span asp-validation-for="Email" class="text-danger"></span>
+			 </div>
+		 </div>
+		 <div class="mb-3 row">
+			 <label class="col-form-label col-sm-4" asp-for="Address"></label>
+			 <div class="col-sm-8">
+				 <input class="form-control" asp-for="Address" />
+				 <span asp-validation-for="Address" class="text-danger"></span>
+			 </div>
+		 </div>
+		 <div class="row">
+	<div class="col-sm-8 offset-sm-4">
+		<button type="submit" class="btn btn-primary btn-md">Save</button>
+	</div>
+</div>
+     </form>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	  </div>
+	</div>
+  </div>
+</div>

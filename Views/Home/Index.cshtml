@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Home Page";
+    ViewData["HomePage"] = true;
+}
+
+
+<div style="background-color:#08618d">
+    <div class="container text-white py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-md-6">
+                <h2 class="mb-5 display-2">Best Store For Electronice </h2>
+                <p>Find a large selection of newest electronic devices from most popular brands and with affordable prices</p>
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="/images/hero.png" alt="Alternate Text" class="img-fluid"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="text-center mt-5 mb-5 text-primary display-1">Newest Product</h2>
+    <div class="row g-3">
+       @foreach(var product in Model)
+        {
+        <div class="col-lg-3 col-md-6">
+            <div class="p-5 shadow rounded border p-3 text-center h-100">
+                    <img src="/products/@product.ImageFile" class="img-fluid" style="object-fit:contain;height:180px"/>
+                    <hr />
+                    <h5 class="py-3">@product.Name</h5>
+                    <p><strong>Brand :</strong> @product.Brand</p>
+                    <p><strong>Category: </strong>@product.Category</p>
+                    <h3>@(product.Price)$</h3>
+                    <a  class="btn btn-primary btn-sm mb-" asp-action="details" asp-controller="Store" asp-route-id="@product.Id">Details</a>
+                         <button type="button" class="btn btn-warning btn-sm">
+                                Add To Cart <i class="bi bi-cart4" style="color: white;"></i>
+                         </button>
+            </div>
+        </div>
+        }
+    </div>
+</div>
