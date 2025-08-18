@@ -68,6 +68,11 @@ namespace ElectronicsStore.Controllers
             TempData["DeliveryAddress"] = checkDto.Delviery;
             TempData["PaymentMethod"] = checkDto.PaymentMethod;
 
+            if (checkDto.PaymentMethod == "paypal" || checkDto.PaymentMethod == "credit_card")
+            {
+                return RedirectToAction("index", "checkout");
+            }
+
             return RedirectToAction("Confirm");
         }
 
