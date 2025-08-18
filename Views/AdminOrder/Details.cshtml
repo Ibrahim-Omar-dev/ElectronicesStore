@@ -1,0 +1,289 @@
+﻿@model Order
+@{
+}
+
+<div class="container my-4">
+    <h2 class="h2 text-center mb-5 text-primary">Order Details</h2>
+
+    <div class="row g-3 mb-4">
+        <!-- Order Info -->
+        <div class="col-lg-6 p-4 border rounded shadow-sm bg-white">
+            <h3 class="text-primary pb-3 border-bottom">Order</h3>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Order ID</div>
+                <div class="col">@Model.Id</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Delivery Address</div>
+                <div class="col">@Model.DeliveryAddress</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Payment Method</div>
+                <div class="col">@Model.PaymentMethod</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Payment Status</div>
+                <div class="col">
+                    @switch (Model.PaymentStatus)
+                    {
+                        case "Pending":
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                            break;
+                        case "Accepted":
+                                    <span class="badge bg-success">Accepted</span>
+                            break;
+                        case "Canceled":
+                                    <span class="badge bg-danger">Canceled</span>
+                            break;
+                        default:
+                                    <span class="badge bg-dark">Unknown</span>
+                            break;
+                    }
+                    <a class=" ms-2" asp-action="Edit" data-bs-toggle="modal" data-bs-target="#PaymentStatusModal">
+                        Edit
+                    </a>
+                     <a class=" ms-2" asp-action="Edit" data-bs-toggle="modal" data-bs-target="#PaymentStatusDetailsModal">
+                          Details
+                      </a>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Order Status</div>
+                <div class="col">
+                    @switch (Model.OrderStatus)
+                    {
+                        case "Pending":
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                            break;
+                        case "Created":
+                                    <span class="badge bg-secondary">Created</span>
+                            break;
+                        case "Accepted":
+                                    <span class="badge bg-primary">Accepted</span>
+                            break;
+                        case "Shipped":
+                                    <span class="badge bg-info text-dark">Shipped</span>
+                            break;
+                        case "Delivered":
+                                    <span class="badge bg-success">Delivered</span>
+                            break;
+                        case "Returned":
+                                    <span class="badge bg-warning text-dark">Returned</span>
+                            break;
+                        case "Deleted":
+                                    <span class="badge bg-danger">Deleted</span>
+                            break;
+                        default:
+                                    <span class="badge bg-dark">Unknown</span>
+                            break;
+                    }
+                    <a class="ms-2" asp-action="Edit" data-bs-toggle="modal" data-bs-target="#OrderStatusModal">
+                        Edit
+                    </a>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Order Date</div>
+                <div class="col">@Model.CreatedAt.ToString("MM/dd/yyyy")</div>
+            </div>
+        </div>
+
+        <!-- Client Info -->
+        <div class="col-lg-6 p-4 border rounded shadow-sm bg-white">
+            <h3 class="text-primary pb-3 border-bottom">Client</h3>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Name</div>
+                <div class="col">
+                    <a asp-controller="User" asp-action="Details" asp-route-id="@Model.Client.Id">
+                        @(Model.Client.FirstName + " " + Model.Client.LastName)
+                    </a>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Orders Number</div>
+                <div class="col">@ViewBag.OrderCount</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Email</div>
+                <div class="col">@Model.Client.Email</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Phone Number</div>
+                <div class="col">@Model.Client.PhoneNumber</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Address</div>
+                <div class="col">@Model.Client.Address</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Registered Date</div>
+                <div class="col">@Model.Client.CreateAt.ToString("MM/dd/yyyy")</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle shadow-sm">
+            <thead class="table-light">
+                <tr class="fw-bold text-center">
+                    <th>Product</th>
+                    <th>Details</th>
+                    <th>Unit</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    decimal subtotal = 0;
+                    foreach (var item in Model.OrderItems)
+                    {
+                        subtotal += item.Price * item.Quentity;
+                                <tr style="cursor:pointer"
+                                    onclick="window.location='@Url.Action("Details", "Store", new { id = item.Product.Id })'">
+                                    <td class="text-center">
+                                        <img src="/products/@item.Product.ImageFile" 
+                                             width="100" 
+                                             alt="@item.Product.Name" 
+                                             style="max-height:150px" 
+                                             class="rounded shadow-sm"/>
+                                    </td>
+                                    <td>
+                                        <h5>@item.Product.Name</h5>
+                                        <small class="text-muted">@item.Product.Category</small><br />
+                                        <span class="fw-bold text-primary">@(item.Price)$</span>
+                                    </td>
+                                    <td class="text-center">@item.Quentity</td>
+                                    <td class="text-end fw-bold">@(item.Quentity * item.Price)$</td>
+                                </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totals -->
+    <div class="mx-auto mb-4 p-3 border rounded shadow-sm bg-light" style="max-width:320px">
+        <div class="row mb-2">
+            <div class="col fw-bold">Subtotal :</div>
+            <div class="col text-end">@subtotal$</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col fw-bold">Shipping Fee :</div>
+            <div class="col text-end">@Model.ShippingFee$</div>
+        </div>
+        <div class="row">
+            <div class="col fw-bold">Total :</div>
+            <div class="col text-end text-success fw-bold">
+                @(subtotal + (decimal)Model.ShippingFee)$
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MODALS ========== -->
+
+<!-- Order Status Modal -->
+<div class="modal fade" id="OrderStatusModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="get" asp-action="Edit">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Order Status</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id" value="@Model.Id"/>
+          <select name="OrderStatus" class="form-select">
+            <option value="Pending" selected="@(Model.OrderStatus=="Pending")">Pending</option>
+            <option value="Created" selected="@(Model.OrderStatus=="Created")">Created</option>
+            <option value="Accepted" selected="@(Model.OrderStatus=="Accepted")">Accepted</option>
+            <option value="Shipped" selected="@(Model.OrderStatus=="Shipped")">Shipped</option>
+            <option value="Delivered" selected="@(Model.OrderStatus=="Delivered")">Delivered</option>
+            <option value="Returned" selected="@(Model.OrderStatus=="Returned")">Returned</option>
+            <option value="Deleted" selected="@(Model.OrderStatus=="Deleted")">Deleted</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Status Modal -->
+<div class="modal fade" id="PaymentStatusModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="get" asp-action="Edit">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Payment Status</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id" value="@Model.Id"/>
+          <select name="PaymentStatus" class="form-select">
+            <option value="Pending" selected="@(Model.PaymentStatus=="Pending")">Pending</option>
+            <option value="Accepted" selected="@(Model.PaymentStatus=="Accepted")">Accepted</option>
+            <option value="Canceled" selected="@(Model.PaymentStatus=="Canceled")">Canceled</option>
+          </select>
+        </div>
+         <div class="modal-footer">
+           <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- Payment Status Details Modal -->
+<div class="modal fade" id="PaymentStatusDetailsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Payment Status Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Order ID:</strong> @Model.Id</p>
+        <p><strong>Current Payment Status:</strong> 
+                    @switch (Model.PaymentStatus)
+                    {
+                        case "Pending":
+                          <span class="badge bg-warning text-dark">Pending</span>
+                            break;
+                        case "Accepted":
+                          <span class="badge bg-success">Accepted</span>
+                            break;
+                        case "Canceled":
+                          <span class="badge bg-danger">Canceled</span>
+                            break;
+                        default:
+                          <span class="badge bg-dark">Unknown</span>
+                            break;
+                    }
+        </p>
+        <p class="text-muted">This information is read-only and cannot be modified here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

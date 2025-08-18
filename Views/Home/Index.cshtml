@@ -34,7 +34,7 @@
                     <p><strong>Category: </strong>@product.Category</p>
                     <h3>@(product.Price)$</h3>
                     <a  class="btn btn-primary btn-sm mb-" asp-action="details" asp-controller="Store" asp-route-id="@product.Id">Details</a>
-                         <button type="button" class="btn btn-warning btn-sm">
+                             <button type="button" class="btn btn-warning btn-sm" onclick="addToCart(this,@product.Id)">
                                 Add To Cart <i class="bi bi-cart4" style="color: white;"></i>
                          </button>
             </div>

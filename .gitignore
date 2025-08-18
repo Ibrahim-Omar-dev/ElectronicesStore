@@ -14,8 +14,18 @@ appsettings.Production.json
 **/bin/Debug/
 **/bin/Release/
 
+appsettings.json
+appsettings.*.json
 # Environment files
 .env
 
 # Temporary files
 *.tmp
+
+appsettings.json
+
+bin/
+obj/
+*.user
+*.suo
+*.vsidx

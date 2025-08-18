@@ -1,0 +1,51 @@
+﻿@{
+}
+
+<div class="mx-auto rounded border p-4" style="width:420px">
+	<h3 class="h3 text-center mb-3">Order Details</h3>
+	<hr />
+
+	@if (TempData["SuccessMessage"] != null)
+	{
+			<div class="alert alert-success" role="alert">
+			@TempData["SuccessMessage"]
+				<a class="btn btn-outline-primary" asp-controller="ClientOrders" asp-action="Index">Back</a>
+			</div>
+	}
+	else
+	{
+		<div class="row mb-3">
+			<div class="col-md-5">Delivery Address</div>
+			<div class="col-md-7">@ViewBag.DeliveryAddress </div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-5">Payment Method</div>
+			<div class="col-md-7">@ViewBag.PaymentMethod </div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-5">Total Price</div>
+			<div class="col-md-7">@ViewBag.Total </div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-5">Quantity</div>
+			<div class="col-md-7">@ViewBag.Quentity </div>
+		</div>
+			<form method="post" asp-action="Confirm">
+			@Html.AntiForgeryToken()
+
+		<input type="hidden" name="deliveryAddress" value="@ViewBag.DeliveryAddress" />
+		<input type="hidden" name="paymentMethod" value="@ViewBag.PaymentMethod" />
+
+		<div class="row">
+			<div class="col-sm-6 d-grid">
+				<button class="btn btn-primary" type="submit">Confirm</button>
+			</div>
+			<div class="col-sm-6 d-grid">
+				<a class="btn btn-outline-primary" asp-action="Index">Cancel</a>
+			</div>
+		</div>
+	</form>
+
+	}
+
+</div>

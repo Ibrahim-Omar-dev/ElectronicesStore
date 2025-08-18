@@ -15,7 +15,7 @@
             <h2 class="display-1">@Model.Name</h2>
             <p class="display-4 fw-bold">@Model.Price$</p>
 
-            <button type="button" class="btn btn-warning btn-sm">
+            <button type="button" class="btn btn-warning btn-sm" onclick="addToCart(this,@Model.Id)">
                 Add To Cart 
                 <i class="bi bi-cart4 text-white"></i>
             </button>

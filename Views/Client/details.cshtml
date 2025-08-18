@@ -1,0 +1,149 @@
+﻿@model Order
+@{
+}
+
+<div class="container my-4">
+    <h2 class="h2 text-center mb-5 text-primary">Order Details</h2>
+
+    <div class="row g-3 mb-4">
+        <!-- Order Info -->
+        <div class="col p-4 border rounded shadow-sm bg-white">
+            <h3 class="text-primary pb-3 border-bottom">Order</h3>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Order ID</div>
+                <div class="col">@Model.Id</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Delivery Address</div>
+                <div class="col">@Model.DeliveryAddress</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Payment Method</div>
+                <div class="col">@Model.PaymentMethod</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Payment Status</div>
+                <div class="col">
+                    @switch (Model.PaymentStatus)
+                    {
+                        case "Pending":
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                            break;
+                        case "Accepted":
+                                            <span class="badge bg-success">Accepted</span>
+                            break;
+                        case "Canceled":
+                                            <span class="badge bg-danger">Canceled</span>
+                            break;
+                        default:
+                                            <span class="badge bg-dark">Unknown</span>
+                            break;
+                    }
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Order Status</div>
+                <div class="col">
+                    @switch (Model.OrderStatus)
+                    {
+                        case "Pending":
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                            break;
+                        case "Created":
+                                            <span class="badge bg-secondary">Created</span>
+                            break;
+                        case "Accepted":
+                                            <span class="badge bg-primary">Accepted</span>
+                            break;
+                        case "Shipped":
+                                            <span class="badge bg-info text-dark">Shipped</span>
+                            break;
+                        case "Delivered":
+                                            <span class="badge bg-success">Delivered</span>
+                            break;
+                        case "Returned":
+                                            <span class="badge bg-warning text-dark">Returned</span>
+                            break;
+                        case "Deleted":
+                                            <span class="badge bg-danger">Deleted</span>
+                            break;
+                        default:
+                                            <span class="badge bg-dark">Unknown</span>
+                            break;
+                    }
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col fw-bold">Order Date</div>
+                <div class="col">@Model.CreatedAt.ToString("MM/dd/yyyy")</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Order Items -->
+    <div class="table-responsive mt-5">
+        <table class="table table-bordered table-hover align-middle shadow-sm">
+            <thead class="table-light">
+                <tr class="fw-bold text-center">
+                    <th>Product</th>
+                    <th>Details</th>
+                    <th>Unit</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    decimal subtotal = 0;
+                    foreach (var item in Model.OrderItems)
+                    {
+                        subtotal += item.Price * item.Quentity;
+                                        <tr style="cursor:pointer"
+                                            onclick="window.location='@Url.Action("Details", "Store", new { id = item.Product.Id })'">
+                                            <td class="text-center">
+                                                <img src="/products/@item.Product.ImageFile" 
+                                                     width="100" 
+                                                     alt="@item.Product.Name" 
+                                                     style="max-height:150px" 
+                                                     class="rounded shadow-sm"/>
+                                            </td>
+                                            <td>
+                                                <h5>@item.Product.Name</h5>
+                                                <small class="text-muted">@item.Product.Category</small><br />
+                                                <span class="fw-bold text-primary">@(item.Price)$</span>
+                                            </td>
+                                            <td class="text-center">@item.Quentity</td>
+                                            <td class="text-end fw-bold">@(item.Quentity * item.Price)$</td>
+                                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totals -->
+    <div class="mx-auto mb-4 p-3 border rounded shadow-sm bg-light" style="max-width:320px">
+        <div class="row mb-2">
+            <div class="col fw-bold">Subtotal :</div>
+            <div class="col text-end">@subtotal$</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col fw-bold">Shipping Fee :</div>
+            <div class="col text-end">@Model.ShippingFee$</div>
+        </div>
+        <div class="row">
+            <div class="col fw-bold">Total :</div>
+            <div class="col text-end text-success fw-bold">
+                @(subtotal + (decimal)Model.ShippingFee)$
+            </div>
+        </div>
+    </div>
+</div>
+
+

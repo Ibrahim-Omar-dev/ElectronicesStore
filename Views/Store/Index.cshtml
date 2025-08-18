@@ -64,7 +64,7 @@
                            asp-route-id="@product.Id">
                            Details
                         </a>
-                        <button type="button" class="btn btn-warning btn-sm">
+                            <button type="button" class="btn btn-warning btn-sm" onclick="addToCart(this,@product.Id)">
                             Add To Cart <i class="bi bi-cart4"></i>
                         </button>
                     </div>

@@ -1,0 +1,138 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> signInManager
+@model CheckDto
+
+<div class="border row p-3">
+    <div class="col-md-8">
+        <h3 class="text-center h3">Shopping Cart</h3>
+        <hr />
+        @if (ViewBag.ErrorMessage != null)
+        {
+                <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                @ViewBag.ErrorMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+        }
+
+        <table class="table align-middle">
+            <tbody>
+                @foreach (var item in ViewBag.CartItems)
+                {
+                        <tr>
+                            <td>
+                                <img src="/products/@item.Product.ImageFile" width="100" class="rounded" alt="Product image" />
+                            </td>
+                            <td>
+                                <h4>@item.Product.Name</h4>
+                                <p>
+                                    Brand: @item.Product.Brand<br />
+                                    Category: @item.Product.Category<br />
+                                    Price: @item.Product.Price$
+                                </p>
+                            </td>
+                            <td style="white-space:nowrap">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                          onclick="decrease(@item.Product.Id)" >-</button>
+                                <span class="border rounded-3 p-2 m-1">@item.Quentity</span>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                                onclick="increase(@item.Product.Id)">+</button>
+                            </td>
+                            <td>@(item.Price * item.Quentity)$</td>
+                            <td>
+                                    <button type="button" class="btn btn-link text-danger" onclick="remove(@item.Product.Id)">
+                                    <i class="bi bi-trash h4"></i>
+                                </button>
+                            </td>
+                        </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-4">
+        <div class="text-white rounded my-2 p-3" style="background-color:#08618d">
+            @if (!signInManager.IsSignedIn(User))
+            {
+                    <div class="row">
+                        <div class="col">
+                            <p>Subtotal :</p>
+                        </div>
+                        <div class="col">
+                            <p>@(ViewBag.SubTotal.ToString("0.00"))$</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col d-grid">
+                            <a class="btn btn-light" asp-controller="Account" asp-action="Register">Register</a>
+                        </div>
+                        <div class="col d-grid">
+                            <a class="btn btn-outline-light ms-3" asp-controller="Account" asp-action="Login">Login</a>
+                        </div>
+                    </div>
+            }
+            else
+            {
+                    <form method="post">
+                    @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="Delviery"></label>
+                            <input type="text" class="form-control" asp-for="Delviery" />
+                            <span class="text-warning" asp-validation-for="Delviery"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="PaymentMethod"></label>
+                            <select class="form-select" asp-for="PaymentMethod">
+                                <option value="cash">Cash On Delivery</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="paypal">PayPal</option>
+                            </select>
+                        </div>
+
+                        <hr />
+
+                        <div class="row">
+                            <div class="col">
+                                <p>Subtotal :</p>
+                            </div>
+                            <div class="col text-end">
+                                <p>@(ViewBag.SubTotal.ToString("0.00"))$</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <p>Shipping :</p>
+                            </div>
+                            <div class="col text-end">
+                                <p>@(ViewBag.ShippingFee.ToString("0.00"))$</p>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <div class="row fw-bold">
+                            <div class="col">
+                                <p>Total :</p>
+                            </div>
+                            <div class="col text-end">
+                                <p>@(ViewBag.Total.ToString("0.00"))$</p>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button class="btn btn-outline-light" type="submit">CheckOut</button>
+                        </div>
+                    </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+
+       
+}
+

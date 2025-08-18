@@ -1,18 +1,108 @@
-﻿<!DOCTYPE html>
+﻿@using ElectronicsStore.Helper
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> signInManager
+@inject UserManager<ApplicationUser> userManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Electronics Store</title>
 	<link rel="icon" href="/images/app-store.png"/>
-	<script type="importmap"></script>
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/ElectronicsStore.styles.css" asp-append-version="true" />
 </head>
 <body>
+	<script>
+		function getShoppingCart() {
+	//document.cookie get all cookie in this 
+	//cookieName=value;cookieName=value;cookieName=value;
+	const cookieName = "shopping_cart";
+	let cookieArray = document.cookie.split(";");
+	for (let i = 0; i < cookieArray.length; i++) {
+		let cookie = cookieArray[i].trim();
+		if (cookie.startsWith(cookieName + "=")) {
+			let cookieValue = cookie.substring(cookie.indexOf("=") + 1);
+			try {
+				let cart = JSON.parse(atob(cookieValue));
+				return cart;
+			} catch (exception) {
+				break;
+			}
+		}
+	}
+	return {};
+}
+function saveCart(cart) {
+	let cartStr = btoa(JSON.stringify(cart));
+	// Set cookie expiry to 365 days
+	let d = new Date();
+	d.setDate(d.getDate() + 365);
+	let expires = d.toUTCString();
+	document.cookie = "shopping_cart=" + cartStr + ";expires=" + expires + ";path=/;SameSite=Strict;Secure";
+}
+function addToCart(button, id) {
+	let cart = getShoppingCart();
+	let quantity = cart[id];
+	if (isNaN(quantity)) {
+		cart[id] = 1;
+	} else {
+		cart[id] = Number(quantity) + 1;
+	}
+	saveCart(cart);
+	// Update button
+	button.innerHTML = "Added <i class='bi bi-check-lg'></i>";
+	// Calculate total cart size
+	let cartSize = 0;
+	for (let [key, qty] of Object.entries(cart)) {
+		if (isNaN(qty)) continue;
+		cartSize += Number(qty);
+	}
+	document.getElementById("cartSize").innerHTML = cartSize;
+}
+function increase(id)
+{
+	let cart=getShoppingCart();
+	let quantity=cart[id];
+	if(isNaN(quantity))
+	{
+		cart[id]=1;
+	}
+	else
+	{
+		cart[id]=Number(quantity) +1;
+	}
+	saveCart(cart);
+	location.reload();
+}
+function decrease(id)
+{
+	let cart=getShoppingCart();
+	let quantity=cart[id];
+	if(isNaN(quantity))
+	{
+		return;
+	}
+	if(Number(quantity) > 1)
+	{
+		cart[id]=Number(quantity)-1;
+		saveCart(cart);
+		location.reload();
+	}
+}
+function remove(id)
+{
+	let cart=getShoppingCart();
+	if(cart[id])
+	{
+		delete cart[id];
+		saveCart(cart);
+		location.reload();
+	}
+}
+</script>
 	<header>
 		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
 			<div class="container">
@@ -35,93 +125,108 @@
 							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
 						</li>
 					</ul>
+					<ul class="navbar-nav">
+						<li class="nav-item me-2">
+							<a asp-controller="cart" asp-action="index" class="nav-link text-dark">
+								<i class="bi bi-cart4 text-danger h3"></i>
+								<span id="cartSize" class="badge rounded-pill text-bg-danger" style="vertical-align:top">
+									@CartHelper.GetSize(Context.Request, Context.Response)
+								</span>
+							</a>
+						</li>
+					</ul>
 
 					@if (signInManager.IsSignedIn(User))
 					{
 						var userApp = await userManager.GetUserAsync(User);
 						if (User.IsInRole("admin"))
 						{
-							<div class="dropdown-center">
-								<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-									@(userApp.FirstName + " " + userApp.LastName + " (Admin)")
-								</button>
-								<ul class="dropdown-menu">
-									<li class="p-2">
-										<a class="nav-link text-dark" asp-controller="Product" asp-action="Index">Product</a>
-									</li>
-									<li class="p-2">
-										<a class="nav-link text-dark" asp-controller="user" asp-action="Index">Users</a>
-									</li>
-									<li class="p-2">
-										<a class="nav-link text-dark" asp-controller="Account" asp-action="profile">Profile</a>
-									</li>
-									<li><hr class="dropdown-divider"/></li>
-								</ul>
-							</div>
-							<ul class="navbar-nav">
-								<li class="nav-item">
-									<a class="btn btn-primary ms-3" asp-controller="Account" asp-action="Logout">Logout</a>
-								</li>
-							</ul>
+									<div class="dropdown-center">
+										<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									@(userApp.UserName + " (Admin)")
+										</button>
+										<ul class="dropdown-menu">
+											<li class="p-2">
+												<a class="nav-link text-dark" asp-controller="Product" asp-action="Index">Product</a>
+											</li>
+											<li class="p-2">
+												<a class="nav-link text-dark" asp-controller="user" asp-action="Index">Users</a>
+											</li>
+											<li class="p-2">
+												<a class="nav-link text-dark" asp-controller="Account" asp-action="profile">Profile</a>
+											</li>
+											 <li class="p-2">
+												 <a class="nav-link text-dark" asp-controller="AdminOrder" asp-action="Index">Order List</a>
+											 </li>
+											<li><hr class="dropdown-divider"/></li>
+										</ul>
+									</div>
+									<ul class="navbar-nav">
+										<li class="nav-item">
+											<a class="btn btn-primary ms-3" asp-controller="Account" asp-action="Logout" onclick="clearUserCart()">Logout</a>
+										</li>
+									</ul>
 						}
 						else if (User.IsInRole("client"))
 						{
-							<div class="dropdown-center">
-								<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-									@(userApp.FirstName + " " + userApp.LastName + " (Client)")
-								</button>
-								<ul class="dropdown-menu">
-
-									<li class="p-2">
-										<a class="nav-link text-dark" asp-controller="Account" asp-action="profile">Profile</a>
-									</li>
-									<li><hr class="dropdown-divider"/></li>
-								</ul>
-							</div>
-							<ul class="navbar-nav">
-								<li class="nav-item">
-									<a class="btn btn-primary ms-3" asp-controller="Account" asp-action="Logout">Logout</a>
-								</li>
-							</ul>
+									<div class="dropdown-center">
+										<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									@(userApp.UserName + " (Client)")
+										</button>
+										<ul class="dropdown-menu">
+											<li class="p-2">
+												<a class="nav-link text-dark" asp-controller="Account" asp-action="profile">Profile</a>
+											</li>
+											<li class="p-2">
+												<a class="nav-link text-dark" asp-controller="Client" asp-action="Index">Orders</a>
+											</li>
+											<li><hr class="dropdown-divider"/></li>
+										</ul>
+									</div>
+									<ul class="navbar-nav">
+										<li class="nav-item">
+											<a class="btn btn-primary ms-3" asp-controller="Account" asp-action="Logout" onclick="clearUserCart()">Logout</a>
+										</li>
+									</ul>
 						}
 						else
 						{
-							<ul class="navbar-nav">
-								<li class="nav-item">
-									<a class="btn btn-primary ms-3" asp-controller="Account" asp-action="Logout">Logout</a>
-								</li>
-							</ul>
+									<ul class="navbar-nav">
+										<li class="nav-item">
+											<a class="btn btn-primary ms-3" asp-controller="Account" asp-action="Logout" onclick="clearUserCart()">Logout</a>
+										</li>
+									</ul>
 						}
 					}
 					else
 					{
-						<ul class="navbar-nav">
-							<li class="nav-item">
-								<a class="btn btn-outline-primary" asp-controller="Account" asp-action="Register">Register</a>
-							</li>
-							<li class="nav-item">
-								<a class="btn btn-primary ms-3" asp-controller="Account" asp-action="Login">Login</a>
-							</li>
-						</ul>
+							<ul class="navbar-nav">
+								<li class="nav-item">
+									<a class="btn btn-outline-primary" asp-controller="Account" asp-action="Register">Register</a>
+								</li>
+								<li class="nav-item">
+									<a class="btn btn-primary ms-3" asp-controller="Account" asp-action="Login">Login</a>
+								</li>
+							</ul>
 					}
 				</div>
-
 			</div>
 		</nav>
 	</header>
+
 	@if (ViewData["HomePage"] != null && (bool)ViewData["HomePage"])
 	{
-		<main role="main" class="pb-3">
+			<main role="main" class="pb-3">
 			@RenderBody() 
-       </main>
+		   </main>
 	}
 	else
 	{
-		<div class="container mt-3">
-			<main role="main" class="pb-3">
+			<div class="container mt-3">
+				<main role="main" class="pb-3">
 				@RenderBody()
-			</main>
-		</div>
+				</main>
+			</div>
 	}
 
 	<footer class="border-top footer text-muted ">
@@ -129,6 +234,7 @@
 			<img src="/images/app-store.png" alt="Alternate Text" width="30px" style="object-fit:contain"/> &copy; 2025 - ElectronicsStore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
 		</div>
 	</footer>
+
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
