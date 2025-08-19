@@ -104,7 +104,3 @@ The responsive design ensures optimal viewing experience across all devices, fro
 3. Configure environment variables
 4. Start the development server with `npm start`
 5. Visit `` to view the application
-
-## Contributing
-
-Contributions are welcome! Please read the contributing guidelines before submitting pull requests.
